@@ -1,11 +1,24 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import axios from 'axios'
 
 const App = () => {
 
-  const [persons, setPersons] = useState([{ name: 'Arto Hellas', number: "0398092384"}]) 
+  const [persons, setPersons] = useState([]) 
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [displayedPersons, setDisplayedPersons] = useState(persons)
+
+  useEffect(() => {
+    console.log("Effect")
+    axios.get("http://localhost:3001/persons")
+    .then((response) => {
+      console.log("Fullfilled")
+      setPersons(response.data)
+      setDisplayedPersons(response.data)
+    })
+  }, [])
+
+  console.log('render', persons.length, 'persons')
 
   const addNewPersonHandler = (event) => {
 
@@ -20,9 +33,11 @@ const App = () => {
         name: newName,
         number: newNumber
       }
+
       setPersons(persons.concat(personObject))
-      setDisplayedPersons(persons)
+      setDisplayedPersons(displayedPersons.concat(personObject))
     }
+
     setNewName("")
     setNewNumber("")
   }
