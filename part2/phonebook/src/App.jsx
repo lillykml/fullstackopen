@@ -8,11 +8,18 @@ const App = () => {
     setNewName(event.target.value)
   }
 
+  // change function to check if the name already exists and issue warning
   const addNumber = (event) => {
     event.preventDefault()
-    const newPerson = {name: newName}
-    setPersons(persons.concat(newPerson))
-    setNewName('')
+    const exists = persons.find(person => person.name === newName);
+
+    if (exists) {
+      alert(`${newName} is already added to phonebook`)
+    } else {
+      const newPerson = {name: newName}
+      setPersons(persons.concat(newPerson))
+      setNewName('')
+    }
   }
 
   return (
