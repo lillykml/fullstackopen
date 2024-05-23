@@ -1,7 +1,7 @@
-import axios from 'axios'
 import { useState, useEffect } from 'react'
 import Numbers from './components/Numbers'
 import NewPerson from './components/NewPerson'
+import phonebookService from './services/phonebook'
 
 const App = () => {
   const [persons, setPersons] = useState([])
@@ -11,7 +11,7 @@ const App = () => {
   const [filteredPersons, setFilterdPersons] = useState(persons)
 
   useEffect(() => {
-    axios.get('http://localhost:3001/persons')
+    phonebookService.getAll()
     .then(response => {
       setPersons(response.data)
       setFilterdPersons(response.data)
@@ -34,17 +34,37 @@ const App = () => {
 
   const addNumber = (event) => {
     event.preventDefault()
-    const exists = persons.find(person => person.name === newName);
+    const existingPerson = persons.find(person => person.name === newName);
 
-    if (exists) {
-      alert(`${newName} is already added to phonebook`)
+    if (existingPerson) {
+      if (confirm(`${newName} is already added to phoneboo, replace the old number with a new one?`)) {
+        const updatedPerson = {...existingPerson, number: newNumber} 
+        phonebookService
+        .update(existingPerson.id, updatedPerson)
+        .then(response => {
+          setPersons(persons.map(p=> p.id !== existingPerson.id ? p : response.data))
+          setNewName('')
+          setNewNumber('')
+        })
+      }
     } else {
       const newPerson = {name: newName, number: newNumber}
-      setPersons(persons.concat(newPerson))
-      setNewName('')
-      setNewNumber('')
+      phonebookService.create(newPerson)
+      .then(response => {
+        setPersons(persons.concat(response.data))
+        setNewName('')
+        setNewNumber('')
+      })
     }
   }
+
+  const handleDeletion = (id) => {
+    const person = persons.find(n => n.id === id)
+    if(confirm(`Delete ${person.name}?`)) {
+      phonebookService.deletePerson(id).then(setPersons(persons.filter(person => person.id !== id)))
+    }
+  }
+
 
   return (
     <div>
@@ -52,7 +72,7 @@ const App = () => {
       <div>filter shown with <input value={nameFilter} onChange={handleFilterChange}/></div>
       <NewPerson submitHandler={addNumber} newName={newName} handleNameChange={handleNameChange}
        newNumber={newNumber} handleNumberChange={handleNumberChange} />
-      <Numbers phonebook={filteredPersons} />
+      <Numbers phonebook={filteredPersons} handleDeletion={handleDeletion} />
     </div>
   )
 }
