@@ -3,7 +3,7 @@ import axios from "axios"
 import Country from "./Country"
 
 
-const Results = ({countries}) => {
+const Results = ({countries, displayHandler}) => {
 
     if (countries.length > 10) {
         return (
@@ -15,7 +15,7 @@ const Results = ({countries}) => {
     else {
         return (
             <ul>
-                {countries.map(country => <li key={country}>{country}</li>)}
+                {countries.map(country => <li key={country}>{country} <button onClick={()=>displayHandler(country)}>show</button></li>)}
             </ul>
         )
     }
