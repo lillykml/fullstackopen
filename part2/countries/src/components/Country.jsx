@@ -1,4 +1,19 @@
-const Country = ({country}) => {
+import axios from "axios"
+import { useState, useEffect } from "react"
+
+
+const Country = ({countryName}) => {
+
+    const [country, setCountry] = useState(null)
+
+    // Download individual country data
+    useEffect(()=> {
+        axios
+        .get(`https://studies.cs.helsinki.fi/restcountries/api/name/${countryName}`)
+        .then(response => {
+            setCountry(response.data)
+        })}, [])
+
     if(country) {
         return (
             <>
