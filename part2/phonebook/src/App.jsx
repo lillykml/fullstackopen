@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import Numbers from './components/Numbers'
 import NewPerson from './components/NewPerson'
+import Notification from './components/Notification'
 import phonebookService from './services/phonebook'
 
 const App = () => {
@@ -9,6 +10,8 @@ const App = () => {
   const [newNumber, setNewNumber] = useState('')
   const [nameFilter, setNameFilter] = useState('')
   const [filteredPersons, setFilterdPersons] = useState(persons)
+  const [message, setMessage] = useState(null)
+  const [messageStatus, setMessageStatus] = useState(null)
 
   useEffect(() => {
     phonebookService.getAll()
@@ -36,8 +39,13 @@ const App = () => {
     event.preventDefault()
     const existingPerson = persons.find(person => person.name === newName);
 
+  const clearMessage = () => {
+    setTimeout(() => {
+    setMessage(null)
+  }, 5000)}
+
     if (existingPerson) {
-      if (confirm(`${newName} is already added to phoneboo, replace the old number with a new one?`)) {
+      if (confirm(`${newName} is already added to phonebook, replace the old number with a new one?`)) {
         const updatedPerson = {...existingPerson, number: newNumber} 
         phonebookService
         .update(existingPerson.id, updatedPerson)
@@ -45,6 +53,14 @@ const App = () => {
           setPersons(persons.map(p=> p.id !== existingPerson.id ? p : response.data))
           setNewName('')
           setNewNumber('')
+          setMessageStatus('successfulMessage')
+          setMessage(`Updated ${updatedPerson.name}s number`)
+          clearMessage()
+        })
+        .catch(error => {
+          setMessageStatus('errorMessage')
+          setMessage(`Information of ${updatedPerson.name} has already been removed from the server`)
+          clearMessage()
         })
       }
     } else {
@@ -54,6 +70,9 @@ const App = () => {
         setPersons(persons.concat(response.data))
         setNewName('')
         setNewNumber('')
+        setMessageStatus('successfulMessage')
+        setMessage(`Added ${newPerson.name}`)
+        clearMessage()
       })
     }
   }
@@ -69,6 +88,7 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
+      <Notification message={message} status={messageStatus} />
       <div>filter shown with <input value={nameFilter} onChange={handleFilterChange}/></div>
       <NewPerson submitHandler={addNumber} newName={newName} handleNameChange={handleNameChange}
        newNumber={newNumber} handleNumberChange={handleNumberChange} />
