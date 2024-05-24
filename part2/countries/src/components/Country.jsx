@@ -1,5 +1,6 @@
 import axios from "axios"
 import { useState, useEffect } from "react"
+import Weather from "./Weather"
 
 
 const Country = ({countryName}) => {
@@ -29,6 +30,7 @@ const Country = ({countryName}) => {
                 ))}
                 </ul>
                 <img src={country.flags.png} />
+                <Weather capital={country.capital}/>
             </>
         )
     }

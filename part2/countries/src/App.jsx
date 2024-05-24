@@ -3,6 +3,7 @@ import Search from './components/Search'
 import Results from './components/Results'
 import axios from 'axios'
 
+
 function App() {
   const [searchTerm, setSearchTerm] = useState('')
   const [countries, setCountries] = useState([]) //array of all country names
