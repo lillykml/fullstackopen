@@ -9,15 +9,14 @@ const App = () => {
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [nameFilter, setNameFilter] = useState('')
-  const [filteredPersons, setFilterdPersons] = useState(persons)
   const [message, setMessage] = useState(null)
   const [messageStatus, setMessageStatus] = useState(null)
+
 
   useEffect(() => {
     phonebookService.getAll()
     .then(response => {
       setPersons(response.data)
-      setFilterdPersons(response.data)
     })
   }, [])
 
@@ -35,14 +34,14 @@ const App = () => {
     setFilterdPersons(persons.filter(person => person.name.toLowerCase().includes(event.target.value.toLowerCase())))
   }
 
-  const addNumber = (event) => {
-    event.preventDefault()
-    const existingPerson = persons.find(person => person.name === newName);
-
   const clearMessage = () => {
     setTimeout(() => {
     setMessage(null)
   }, 5000)}
+
+  const addNumber = (event) => {
+    event.preventDefault()
+    const existingPerson = persons.find(person => person.name === newName);
 
     if (existingPerson) {
       if (confirm(`${newName} is already added to phonebook, replace the old number with a new one?`)) {
@@ -84,6 +83,9 @@ const App = () => {
     }
   }
 
+  const byFilterField = p => p.name.toLowerCase().includes(nameFilter.toLowerCase())
+  const personsToShow = nameFilter ? persons.filter(byFilterField) : persons
+
 
   return (
     <div>
@@ -92,7 +94,7 @@ const App = () => {
       <div>filter shown with <input value={nameFilter} onChange={handleFilterChange}/></div>
       <NewPerson submitHandler={addNumber} newName={newName} handleNameChange={handleNameChange}
        newNumber={newNumber} handleNumberChange={handleNumberChange} />
-      <Numbers phonebook={filteredPersons} handleDeletion={handleDeletion} />
+      <Numbers phonebook={personsToShow} handleDeletion={handleDeletion} />
     </div>
   )
 }
