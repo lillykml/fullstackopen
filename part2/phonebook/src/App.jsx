@@ -58,7 +58,9 @@ const App = () => {
         })
         .catch(error => {
           setMessageStatus('errorMessage')
-          setMessage(`Information of ${updatedPerson.name} has already been removed from the server`)
+          if (error.response.status === 400) {
+            setMessage(`Person validation failed: ${error.response.data.error}`)
+          } else {setMessage(`Information of ${updatedPerson.name} has already been removed from the server`)}
           clearMessage()
         })
       }
@@ -71,6 +73,11 @@ const App = () => {
         setNewNumber('')
         setMessageStatus('successfulMessage')
         setMessage(`Added ${newPerson.name}`)
+        clearMessage()
+      })
+      .catch(error => {
+        setMessageStatus('errorMessage')
+        setMessage(`Person validation failed: ${error.response.data.error}`)
         clearMessage()
       })
     }
