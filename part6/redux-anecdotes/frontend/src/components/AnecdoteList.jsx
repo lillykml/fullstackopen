@@ -1,5 +1,6 @@
 import { useSelector, useDispatch } from 'react-redux'
 import { voteAnecdote } from '../reducers/anecdoteReducer'
+import { setNotification } from '../reducers/notificationReducer'
 import Anecdote from './Anecdote'
 
 
@@ -15,6 +16,7 @@ const AnecdoteList = () => {
 
     const vote = (anecdote) => {
         dispatch(voteAnecdote(anecdote))
+        dispatch(setNotification(`voted for ${anecdote.content}`, 5))
     }
 
     // Create a copy of the anecdotes array and sort it
