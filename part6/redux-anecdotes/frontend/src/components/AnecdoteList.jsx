@@ -17,10 +17,13 @@ const AnecdoteList = () => {
         dispatch(voteAnecdote(id))
     }
 
+    // Create a copy of the anecdotes array and sort it
+    const sortedAnecdotes = [...anecdotes].sort((a, b) => b.votes - a.votes);
+
     return(
         <div>
             <h2>Anecdotes</h2>
-            {anecdotes.sort((a,b) => b.votes - a.votes).map(anecdote => 
+            {sortedAnecdotes.map(anecdote => 
             <Anecdote key={anecdote.id} anecdote={anecdote} vote={vote} />)}
         </div>
     )

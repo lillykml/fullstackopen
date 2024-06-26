@@ -1,52 +1,22 @@
-const getId = () => (100000 * Math.random()).toFixed(0)
+import { createSlice } from '@reduxjs/toolkit'
+import anecdoteService from '../services/anecdotes'
 
-const asObject = (anecdote) => {
-  return {
-    content: anecdote,
-    id: getId(),
-    votes: 0
-  }
-}
-
-const initialState = []
-
-const reducer = (state = initialState, action) => {
-  switch(action.type) {
-    case 'VOTE':
-      return state.map(anecdote => anecdote.id === action.payload.id ? {...anecdote, votes: anecdote.votes+1} : anecdote)
-    case 'CREATE':
-      return [...state, action.payload.anecdote]
-    case 'SET':
-      return action.payload.anecdotes
-    default: return state
-  }
-}
-
-export const voteAnecdote = (id) => {
-  return {
-    type: 'VOTE',
-    payload: {
-      id: id
+const anecdoteSlice = createSlice({
+  name: 'anecdotes',
+  initialState: [],
+  reducers: {
+    voteAnecdote(state, action) {
+      const id = action.payload
+      return state.map(anecdote => anecdote.id === id ? {...anecdote, votes: anecdote.votes+1} : anecdote)
+    },
+    addAnecdote(state, action) {
+      state.push(action.payload)
+    },
+    setAnecdotes(state, action) {
+      return action.payload
     }
   }
-} 
+})
 
-export const addAnecdote = (anecdote) => {
-  return {
-    type: 'CREATE',
-    payload: {
-      anecdote: anecdote
-    }
-  }
-}
-
-export const setAnecdotes = (anecdotes) => {
-  return {
-    type: 'SET',
-    payload: {
-      anecdotes: anecdotes
-    }
-  }
-}
-
-export default reducer
+export const { addAnecdote, voteAnecdote, setAnecdotes } = anecdoteSlice.actions
+export default anecdoteSlice.reducer
