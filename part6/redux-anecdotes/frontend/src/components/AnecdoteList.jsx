@@ -13,8 +13,8 @@ const AnecdoteList = () => {
 
     const dispatch = useDispatch()
 
-    const vote = (id) => {
-        dispatch(voteAnecdote(id))
+    const vote = (anecdote) => {
+        dispatch(voteAnecdote(anecdote))
     }
 
     // Create a copy of the anecdotes array and sort it
